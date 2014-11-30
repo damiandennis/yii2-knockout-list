@@ -5,7 +5,8 @@
  * Time: 6:05 AM
  */
 
-namespace damiandennis\stickymojo;
+namespace damiandennis\knockoutlist;
+use yii\web\AssetBundle;
 
 class KnockoutListAsset extends AssetBundle
 {
