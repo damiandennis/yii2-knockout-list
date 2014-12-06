@@ -8,8 +8,8 @@
 ?>
 Showing
 <b>
-    <!-- ko text: begin -->-<!-- ko text: end -->
+    <!-- ko text: begin --><!-- /ko -->-<!-- ko text: end --><!-- /ko -->
 </b>
 of
 <b data-bind="text: totalCount"></b>
-item<!-- ko totalCount() > 0 -->s<!-- /ko -->.
+item<!-- ko totalCount > 0 -->s<!-- /ko -->.

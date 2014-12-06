@@ -8,14 +8,14 @@
 ?>
 <ul class="pagination">
     <li class="prev">
-        <a data-bind="attr: {href: prevUrl, data-page: nextUrl}">&laquo;</a>
+        <a data-bind="attr: { href: prevPage, 'data-page': prevPage }, click: changePage">&laquo;</a>
     </li>
-    <!-- ko foreach: rows -->
-    <li>
-        <a href="/site/test?page=1" data-page="0">1</a>
+    <!-- ko foreach: pages -->
+    <li data-bind=" attr: {class: $data.pageUrl == $parent.selfPage() ? 'active' : null}">
+        <a data-bind="text: $data.pageNo, attr: { href: $data.pageUrl, 'data-page': $data.pageNo }, click: $parent.changePage"></a>
     </li>
     <!-- /ko -->
     <li class="next">
-        <a href="/site/test?page=3" data-page="2">&raquo;</a>
+        <a data-bind="attr: { href: nextPage, 'data-page': nextPage }, click: changePage">&raquo;</a>
     </li>
 </ul>

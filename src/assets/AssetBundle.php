@@ -5,7 +5,7 @@
  * Time: 6:09 AM
  */
 
-namespace damiandennis\stickymojo;
+namespace damiandennis\knockoutlist;
 
 /**
  * Base asset bundle for all widgets

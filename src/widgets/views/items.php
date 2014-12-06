@@ -6,6 +6,8 @@
  * Time: 5:02 PM
  */
 ?>
-<div data-bind="attr {data-key: primaryKey}">
-    <div data-bind="value: primaryKey"></div>
+<!-- ko foreach: { data: items, as: 'item' } -->
+<div data-bind="attr {'data-key': item.id}">
+    <div data-bind="text: item.id"></div>
 </div>
+<!-- /ko -->
