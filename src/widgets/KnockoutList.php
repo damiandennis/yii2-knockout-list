@@ -28,6 +28,7 @@ class KnockoutList extends Widget
     public $applyBindings = true;
     public $filter;
     public $noScriptText = "This section requires Javascript to be enabled.";
+    public $extend;
 
     /**
      * Initializes the view.
@@ -74,6 +75,10 @@ class KnockoutList extends Widget
         $data = self::getData($this->id, $this->dataProvider, $this->filter);
 
         $data['applyBindings'] = $this->applyBindings;
+
+        if ($this->extend) {
+            $data['extend'] = $this->extend;
+        }
 
         $view = $this->getView();
         KnockoutAsset::register($view);
