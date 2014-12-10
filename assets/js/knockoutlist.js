@@ -56,7 +56,6 @@ ko.virtualElements.allowedBindings.stopBinding = true;
                     this.extend();
                 }
             };
-            this.init(data);
             this.changePage = function (data, event) {
                 var url = $(event.target).attr('href');
                 $.ajax({
@@ -71,6 +70,7 @@ ko.virtualElements.allowedBindings.stopBinding = true;
                     }
                 });
             };
+            this.init(data);
         };
 
         if (typeof data.extend === 'string') {
@@ -82,12 +82,33 @@ ko.virtualElements.allowedBindings.stopBinding = true;
     yii.knockoutlist = (function ($) {
         var pub = {
             listView: {},
-            setup: function (data) {
-                this.listView[data.id] = new Instance(data);
-                if (data.applyBindings) {
-                    ko.applyBindings(this.listView[data.id], $('#' + data.id)[0]);
+            loadData: function (data, applyBindings) {
+                applyBindings = applyBindings || false;
+                yii.knockoutlist.listView[data.id] = new Instance(data);
+                if (applyBindings) {
+                    ko.applyBindings(yii.knockoutlist.listView[data.id], $('#' + data.id)[0]);
                 }
-
+            },
+            setup: function (data) {
+                var self = this;
+                var applyBindings = data.applyBindings || false;
+                var extend = data.extend || {};
+                if (typeof data.async !== 'undefined') {
+                    $.ajax({
+                        url: window.location.href,
+                        type: 'get',
+                        dataType: 'json',
+                        data: {
+                            ajax: data.id
+                        },
+                        success: function (res) {
+                            self.loadData(res, applyBindings);
+                        }
+                    });
+                }
+                else {
+                    self.loadData(data, applyBindings);
+                }
             }
         };
         return pub;

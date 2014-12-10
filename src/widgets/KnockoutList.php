@@ -22,6 +22,7 @@ class KnockoutList extends Widget
     public $filter;
     public $noScriptText = "This section requires Javascript to be enabled.";
     public $extend;
+    public $async = false;
 
     /**
      * @inheritdoc
@@ -66,7 +67,14 @@ class KnockoutList extends Widget
             return $content === false ? $matches[0] : $content;
         }, $this->layout);
 
-        $data = self::getData($this->id, $this->dataProvider, $this->filter);
+        if (!$this->async) {
+            $data = self::getData($this->id, $this->dataProvider, $this->filter);
+        } else {
+            $data = [
+                'id' => $this->getId(),
+                'async' => $this->async,
+            ];
+        }
 
         $data['applyBindings'] = $this->applyBindings;
 
