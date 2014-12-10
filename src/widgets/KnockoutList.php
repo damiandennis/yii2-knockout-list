@@ -13,25 +13,18 @@ use yii\base\Widget;
 use yii\helpers\Json;
 use yii\web\View;
 
-/**
- * Created by PhpStorm.
- * User: damian
- * Date: 6/10/14
- * Time: 8:01 AM
- */
 class KnockoutList extends Widget
 {
     public $dataProvider;
-    public $emptyText;
     public $templates = [];
-    public $layout = '{summary}{items}{pager}{sorter}';
+    public $layout = '{summary}{items}{pager}{empty}';
     public $applyBindings = true;
     public $filter;
     public $noScriptText = "This section requires Javascript to be enabled.";
     public $extend;
 
     /**
-     * Initializes the view.
+     * @inheritdoc
      */
     public function init()
     {
@@ -47,7 +40,7 @@ class KnockoutList extends Widget
             'items' => $this->render('items'),
             'pager' => $this->render('pager'),
             'sorter' => $this->render('sorter'),
-            'empty' => 'Nothing found.',
+            'empty' => $this->render('empty'),
         ];
 
         $this->templates = array_merge($templates, $this->templates);
@@ -55,9 +48,7 @@ class KnockoutList extends Widget
         if ($this->dataProvider === null) {
             throw new InvalidConfigException('The "dataProvider" property must be set.');
         }
-        if ($this->emptyText === null) {
-            $this->emptyText = Yii::t('yii', 'No results found.');
-        }
+
         if ($this->filter === null || !is_object($this->filter)) {
             $this->filter = function ($model) {
                 return $model->attributes;
@@ -65,6 +56,9 @@ class KnockoutList extends Widget
         }
     }
 
+    /**
+     * @inheritdoc
+     */
     public function run()
     {
         $content = preg_replace_callback("/{\\w+}/", function ($matches) {
@@ -108,6 +102,12 @@ class KnockoutList extends Widget
         }
     }
 
+    /**
+     * @param string $id The id of the widget
+     * @param \yii\data\BaseDataProvider $dataProvider The dataprovider for the widget
+     * @param \Closure $filter The filter to manipulate the data.
+     * @return array The data required to create the list and pagination.
+     */
     protected static function getData($id, $dataProvider, $filter)
     {
         $data = [
@@ -159,6 +159,19 @@ class KnockoutList extends Widget
             }
         }
 
+        $sort = $dataProvider->getSort();
+
+        if (!($sort === false || empty($sort->attributes) || $dataProvider->getCount() <= 0)) {
+            $attributes = array_keys($sort->attributes);
+            $data['sort'] = [];
+            foreach ($attributes as $name) {
+                $data['sort'][] = [
+                    'name' => $name,
+                    'link' => $sort->createUrl($name),
+                ];
+            }
+        }
+
         foreach ($dataProvider->getModels() as $model) {
             $data['items'][] = $filter ? $filter($model) : $model->attributes;
         }
@@ -166,16 +179,26 @@ class KnockoutList extends Widget
         return $data;
     }
 
-    public static function queryJsonResponse($id, $response, $filter = null)
+    /**
+     * @param string $id The id of the widget
+     * @param \yii\data\BaseDataProvider $dataProvider The dataprovider for the widget
+     * @param \Closure|null $filter The filter to manipulate the data
+     * @throws \yii\base\ExitException
+     */
+    public static function queryJsonResponse($id, $dataProvider, $filter = null)
     {
         if (isset($_GET['ajax']) && $_GET['ajax'] == $id) {
             header('Content-type: application/json');
-            $data = self::getData($id, $response, $filter);
+            $data = self::getData($id, $dataProvider, $filter);
             echo Json::encode($data);
             Yii::$app->end();
         }
     }
 
+    /**
+     * @param string $name The template to render.
+     * @return bool|string The html template or false if template does not exist.
+     */
     public function renderSection($name)
     {
         switch ($name) {
@@ -187,6 +210,8 @@ class KnockoutList extends Widget
                 return $this->templates['pager'];
             case '{sorter}':
                 return $this->templates['sorter'];
+            case '{empty}':
+                return $this->templates['empty'];
             default:
                 return false;
         }

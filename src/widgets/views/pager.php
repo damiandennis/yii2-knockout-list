@@ -6,7 +6,7 @@
  * Time: 5:02 PM
  */
 ?>
-<ul class="pagination">
+<ul class="pagination" data-bind="visible: pageCount() > 1">
     <li class="prev">
         <a data-bind="attr: { href: prevPage, 'data-page': prevPage }, click: changePage">&laquo;</a>
     </li>

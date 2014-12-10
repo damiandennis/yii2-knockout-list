@@ -34,6 +34,10 @@ ko.virtualElements.allowedBindings.stopBinding = true;
                 this.begin ? this.begin(data.begin) : this.begin = ko.observable(data.begin);
                 this.end ? this.end(data.end) : this.end = ko.observable(data.end);
                 this.totalCount ? this.totalCount(data.totalCount) : this.totalCount = ko.observable(data.totalCount);
+                this.pageCount ? this.pageCount(data.pageCount) : this.pageCount = ko.observable(data.pageCount);
+                if (typeof data.sort === 'object') {
+                    this.sort ? this.sort(data.sort) : this.sort = ko.observableArray(data.sort);
+                }
                 var items = ko.utils.arrayMap(data.items, function (item) {
                     return new ItemModel(item);
                 });
