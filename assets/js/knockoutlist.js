@@ -9,19 +9,30 @@ ko.bindingHandlers.stopBinding = {
 };
 ko.virtualElements.allowedBindings.stopBinding = true;
 
+window.history.pushState = window.history.pushState || function(){};
+
 //Private scope to prevent extending of Model in other widgets.
 (function () {
     var Instance = function(data) {
 
+        var instanceId = data.id;
+
         var ItemModel = function (data) {
             var self = this;
             this.loadedData = data;
-            $.each(data, function (key, item) {
-                if (!$.isArray(item) && typeof item !== 'object') {
-                    self[key] = ko.observable(item);
-                }
-            });
-            this.id = ko.observable(data.id);
+
+            if (yii.knockoutlist.settings[instanceId].autoObservables) {
+                $.each(data, function (key, item) {
+                    if (!$.isArray(item)) {
+                        self[key] = ko.observable(item);
+                    }
+                    else if ($.isArray(item)) {
+                        self[key] = ko.observableArray(item);
+                    }
+                });
+            }
+
+
             if (typeof this.extend === 'function') {
                 this.extend();
             }
@@ -29,7 +40,9 @@ ko.virtualElements.allowedBindings.stopBinding = true;
 
         var ListView = function (data) {
             var self = this;
+            var usePushState = data.usePushState || false;
             this.init = function (data) {
+                this.loadedData = data;
                 this.id ? this.id(data.id) : this.id = ko.observable(data.id);
                 this.begin ? this.begin(data.begin) : this.begin = ko.observable(data.begin);
                 this.end ? this.end(data.end) : this.end = ko.observable(data.end);
@@ -58,23 +71,29 @@ ko.virtualElements.allowedBindings.stopBinding = true;
             };
             this.changePage = function (data, event) {
                 var url = $(event.target).attr('href');
+                var send = {};
+                if (!url.match(/(\?|&)ajax=/)) {
+                    send.ajax = self.id();
+                }
                 $.ajax({
                     url: url,
                     type: 'get',
                     dataType: 'json',
-                    data: {
-                        ajax: self.id()
-                    },
+                    data: send,
                     success: function (res) {
                         self.init(res);
+                        if (yii.knockoutlist.settings[self.id()].usePushState) {
+                            url = url.replace(/\?ajax=[^&]+&/, '?');
+                            window.history.pushState({id: self.id(), json: res}, "", url);
+                        }
                     }
                 });
             };
             this.init(data);
         };
 
-        if (typeof data.extend === 'string') {
-            eval(data.extend);
+        if (typeof data.extendModels === 'string') {
+            eval(data.extendModels);
         }
 
         return new ListView(data);
@@ -82,32 +101,53 @@ ko.virtualElements.allowedBindings.stopBinding = true;
     yii.knockoutlist = (function ($) {
         var pub = {
             listView: {},
+            settings: {},
+            currentUrl: "",
             loadData: function (data, applyBindings) {
-                applyBindings = applyBindings || false;
+
                 yii.knockoutlist.listView[data.id] = new Instance(data);
                 if (applyBindings) {
-                    ko.applyBindings(yii.knockoutlist.listView[data.id], $('#' + data.id)[0]);
+                    var id = $('#' + data.id)[0];
+                    ko.cleanNode(id);
+                    ko.applyBindings(yii.knockoutlist.listView[data.id], id);
                 }
             },
             setup: function (data) {
                 var self = this;
-                var applyBindings = data.applyBindings || false;
-                var extend = data.extend || {};
+                self.currentUrl = window.location.href;
+                this.settings[data.id] = {};
+                this.settings[data.id].applyBindings = data.applyBindings || false;
+                this.settings[data.id].autoObservables = data.autoObservables || false;
+                this.settings[data.id].usePushState = data.usePushState || false;
+
                 if (typeof data.async !== 'undefined') {
                     $.ajax({
-                        url: window.location.href,
+                        url: self.currentUrl,
                         type: 'get',
                         dataType: 'json',
                         data: {
                             ajax: data.id
                         },
                         success: function (res) {
-                            self.loadData(res, applyBindings);
+                            self.loadData(res, self.settings[data.id].applyBindings);
+                            if (self.settings[data.id].usePushState) {
+                                window.history.pushState({id: data.id, json: res}, "", self.currentUrl);
+                            }
                         }
                     });
                 }
                 else {
-                    self.loadData(data, applyBindings);
+                    self.loadData(data, this.settings[data.id].applyBindings);
+                    if (self.settings[data.id].usePushState) {
+                        window.history.pushState({id: data.id, json: data}, "", self.currentUrl);
+                    }
+                }
+                if (this.settings[data.id].usePushState) {
+                    window.onpopstate = function(e) {
+                        if (e.state && typeof yii.knockoutlist.listView[e.state.id] != 'undefined') {
+                            yii.knockoutlist.listView[e.state.id].init(e.state.json);
+                        }
+                    };
                 }
             }
         };

@@ -21,8 +21,10 @@ class KnockoutList extends Widget
     public $applyBindings = true;
     public $filter;
     public $noScriptText = "This section requires Javascript to be enabled.";
-    public $extend;
+    public $extendModels;
     public $async = false;
+    public $autoObservables = true;
+    public $usePushState = false;
 
     /**
      * @inheritdoc
@@ -77,9 +79,11 @@ class KnockoutList extends Widget
         }
 
         $data['applyBindings'] = $this->applyBindings;
+        $data['autoObservables'] = $this->autoObservables;
+        $data['usePushState'] = $this->usePushState;
 
-        if ($this->extend) {
-            $data['extend'] = $this->extend;
+        if ($this->extendModels) {
+            $data['extendModels'] = $this->extendModels;
         }
 
         $view = $this->getView();
@@ -96,6 +100,8 @@ class KnockoutList extends Widget
 
         if ($this->applyBindings) {
             echo "<!-- ko stopBinding: true -->";
+        } else {
+            echo "<!-- ko with: {$this->id} -->";
         }
         echo '<div id="'.$this->id.'" style="display: none" data-bind="visible: true">';
         echo $content;
@@ -107,6 +113,8 @@ class KnockoutList extends Widget
         ";
         if ($this->applyBindings) {
             echo "<!-- /ko -->";
+        } else {
+
         }
     }
 
