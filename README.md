@@ -42,7 +42,7 @@ use damiandennis\knockoutlist\KnockoutList;
 echo KnockoutList::widget([
     'id' => $id, // The id from the controller
     'dataProvider' => $dataProvider, //The dataProvider from the controller
-    'templates' => [
+    'templates' => [ // These can be copied from the src/widgets/views
         //'summary' This is the summary of the page
         'items' => '_items' //If this is not included the default is the primary key.
         //'pager' This is the pager of the page.
