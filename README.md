@@ -25,7 +25,7 @@ class SiteController extends Controller
         *      $newRow['Country'] = $row->country->attributes;
         *  }
         */
-        KnockoutList::queryJsonResponse($id, $dataProvider);
+        KnockoutList::queryJsonResponse($id, $dataProvider/*, $filter*/);
         echo $this->render('index', [
             'id' => $id, 
             'dataProvider' => $dataProvider,
