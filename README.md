@@ -23,6 +23,7 @@ class SiteController extends Controller
         /* $filter = function($row) {
         *      $newRow = $row->attributes; //This is default, relations etc need to be added here
         *      $newRow['Country'] = $row->country->attributes;
+        *      return $newRow;
         *  }
         */
         KnockoutList::queryJsonResponse($id, $dataProvider/*, $filter*/);
