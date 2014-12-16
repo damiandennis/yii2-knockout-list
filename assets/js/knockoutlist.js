@@ -41,6 +41,7 @@ window.history.pushState = window.history.pushState || function(){};
         var ListView = function (data) {
             var self = this;
             var usePushState = data.usePushState || false;
+            this.searchData = {};
             this.init = function (data) {
                 this.loadedData = data;
                 this.id ? this.id(data.id) : this.id = ko.observable(data.id);
@@ -81,6 +82,29 @@ window.history.pushState = window.history.pushState || function(){};
                     dataType: 'json',
                     data: send,
                     success: function (res) {
+                        self.init(res);
+                        if (yii.knockoutlist.settings[self.id()].usePushState) {
+                            url = url.replace(/\?ajax=[^&]+&/, '?');
+                            window.history.pushState({id: self.id(), json: res}, "", url);
+                        }
+                    }
+                });
+            };
+            this.searchList = function(items, clear) {
+
+                if (typeof clear !== 'undefined' && clear) {
+                    self.searchData = {};
+                }
+
+                $.extend(self.searchData, items);
+
+                $.ajax({
+                    url: yii.knockoutlist.currentUrl,
+                    type: 'get',
+                    dataType: 'json',
+                    data: $.extend({ajax: self.id()}, self.searchData),
+                    success: function (res) {
+                        console.log(res);
                         self.init(res);
                         if (yii.knockoutlist.settings[self.id()].usePushState) {
                             url = url.replace(/\?ajax=[^&]+&/, '?');
