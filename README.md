@@ -27,7 +27,7 @@ class SiteController extends Controller
         *  }
         */
         KnockoutList::queryJsonResponse($id, $dataProvider/*, $filter*/);
-        echo $this->render('index', [
+        return $this->render('index', [
             'id' => $id, 
             'dataProvider' => $dataProvider,
             //'filter' => $filter,
@@ -66,9 +66,9 @@ echo KnockoutList::widget([
         ko.utils.extend(ItemModel.prototype, {
             extend: function() {
                 this.hello = ko.observable(this.loadedData.name);
-                this.clickMe = ko.computed(function() {
+                this.clickMe = function() {
                     alert('hello');
-                }, this);
+                };
             }
         });
         ko.utils.extend(ListView.prototype, {
@@ -91,7 +91,7 @@ Example _items.php
 <div data-bind="attr {'data-key': item.id}">
     <div data-bind="text: item.id"></div>
     <div data-bind="text: item.hello"></div>
-    <button data-bind="click: item.clickMe" value="Click Me" />
+    <button data-bind="click: item.clickMe">Click Me</button>
 </div>
 <!-- /ko -->
 ```
