@@ -4,7 +4,7 @@ yii2-knockout-list
 This is a widget that works much the same as the default ListView provided by Yii2 but with rendering done in KnockoutJS so that extending it with javascript/KnockoutJS is a breeze.
 
 ```sh
-php composer.phar --prefer-dist --stability=dev damiandennis/yii2-knockout-list
+php composer.phar require --prefer-dist damiandennis/yii2-knockout-list
 ```
 
 This widget requires a few steps to get it functional. Firstly id and dataProvider must be provided in the controller, id is compulsory unlike other yii widgets as it needs an identity and data for the callback.
