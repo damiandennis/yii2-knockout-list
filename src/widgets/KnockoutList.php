@@ -99,6 +99,8 @@ class KnockoutList extends Widget
             View::POS_END
         );
 
+        echo $this->render('templates');
+
         if ($this->applyBindings) {
             echo "<!-- ko stopBinding: true -->";
         } else {
