@@ -95,3 +95,27 @@ Example _items.php
 </div>
 <!-- /ko -->
 ```
+
+Looking for a GridView instead?
+Try this in your _item.php file instead.
+
+```php
+<table class="table table-striped table-bordered">
+    <thead>
+    <tr>
+        <th data-bind="text: labels().id"></th>
+        <th data-bind="text: labels().name"></th>
+        <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    <!-- ko foreach: { data: items, as: 'item' } -->
+    <tr>
+        <td data-bind="text: item.id"></td>
+        <td data-bind="text: item.name"></td>
+        <td data-bind="template: {name: 'actionColumn', data: item.actions}"></td>
+    </tr>
+    <!-- /ko -->
+    </tbody>
+</table>
+```
