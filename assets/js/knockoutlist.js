@@ -9,7 +9,7 @@ ko.bindingHandlers.stopBinding = {
 };
 ko.virtualElements.allowedBindings.stopBinding = true;
 
-window.history.pushState = window.history.pushState || function(){};
+window.history.pushState = window.history.pushState || function() {};
 
 //Private scope to prevent extending of Model in other widgets.
 (function () {
@@ -45,6 +45,8 @@ window.history.pushState = window.history.pushState || function(){};
             this.init = function (data) {
                 this.loadedData = data;
                 this.id ? this.id(data.id) : this.id = ko.observable(data.id);
+                this.labels ? this.labels(data.labels) : this.labels = ko.observable(data.labels);
+                this.actions ? this.actions(data.actions) : this.actions = ko.observable(data.actions);
                 this.begin ? this.begin(data.begin) : this.begin = ko.observable(data.begin);
                 this.end ? this.end(data.end) : this.end = ko.observable(data.end);
                 this.totalCount ? this.totalCount(data.totalCount) : this.totalCount = ko.observable(data.totalCount);
@@ -104,7 +106,6 @@ window.history.pushState = window.history.pushState || function(){};
                     dataType: 'json',
                     data: $.extend({ajax: self.id()}, self.searchData),
                     success: function (res) {
-                        console.log(res);
                         self.init(res);
                         if (yii.knockoutlist.settings[self.id()].usePushState) {
                             url = url.replace(/\?ajax=[^&]+&/, '?');

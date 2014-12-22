@@ -10,7 +10,7 @@
     ],
     "require": {
         "php": ">=5.4",
-        "damiandennis/yii2-knockoutjs": "v3.2.2",
+        "damiandennis/yii2-knockoutjs": "v3.2.3",
         "bower-asset/spin.js": "2.0.1"
     },
     "autoload": {

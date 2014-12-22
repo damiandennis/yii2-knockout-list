@@ -10,6 +10,7 @@ namespace damiandennis\knockoutlist;
 use damiandennis\knockoutjs\KnockoutAsset;
 use Yii;
 use yii\base\Widget;
+use yii\helpers\BaseUrl;
 use yii\helpers\Json;
 use yii\web\View;
 
@@ -188,8 +189,22 @@ class KnockoutList extends Widget
             }
         }
 
-        foreach ($dataProvider->getModels() as $model) {
-            $data['items'][] = $filter ? $filter($model) : $model->attributes;
+        $models = $dataProvider->getModels();
+        if ($models) {
+            $data['labels'] = $models[0]->attributeLabels();
+        }
+        $controller = Yii::$app->controller->id;
+
+        foreach ($models as $key => $model) {
+            $data['items'][$key] = $filter ? $filter($model) : $model->attributes;
+            $data['items'][$key]['actions'] = [
+                'viewUrl' => BaseUrl::toRoute(["{$controller}/view", 'id' => $model->primaryKey]),
+                'viewTitle' => Yii::t('app', 'View'),
+                'updateUrl' => BaseUrl::toRoute(["{$controller}/update", 'id' => $model->primaryKey]),
+                'updateTitle' => Yii::t('app', 'Update'),
+                'deleteUrl' => BaseUrl::toRoute(["{$controller}/delete", 'id' => $model->primaryKey]),
+                'deleteTitle' => Yii::t('app', 'Delete'),
+            ];
         }
 
         return $data;
