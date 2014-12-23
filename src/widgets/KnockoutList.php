@@ -12,6 +12,7 @@ use Yii;
 use yii\base\Widget;
 use yii\helpers\BaseUrl;
 use yii\helpers\Json;
+use yii\web\JsExpression;
 use yii\web\View;
 
 class KnockoutList extends Widget
@@ -84,7 +85,7 @@ class KnockoutList extends Widget
         $data['usePushState'] = $this->usePushState;
 
         if ($this->extendModels) {
-            $data['extendModels'] = $this->extendModels;
+            $data['extendModels'] = new JsExpression($this->extendModels);
         }
 
         $view = $this->getView();
@@ -108,7 +109,7 @@ class KnockoutList extends Widget
         }
         echo '<div id="'.$this->id.'" style="display: none" data-bind="visible: true">';
         echo $content;
-        echo "</div>";
+        echo '</div>';
         echo "
             <noscript>
                 <p>{$this->noScriptText}</p>

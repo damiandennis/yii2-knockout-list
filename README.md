@@ -62,7 +62,7 @@ echo KnockoutList::widget([
      * interference with other KnockoutList widgets on the same page. ListView is the pagination and the outer
      * section. ItemModel is the individual rows.
      */
-    'extendModels' => "
+    'extendModels' => "function(ListView, ItemModel) {
         ko.utils.extend(ItemModel.prototype, {
             extend: function() {
                 this.hello = ko.observable(this.loadedData.name);
@@ -76,7 +76,7 @@ echo KnockoutList::widget([
                 this.name2 = 'hello';
             }
         });
-    ",
+    }",
     //'noScriptText' => "This section requires Javascript to be enabled.", // When JS is disabled.
     //'async' => false, // Loads query after page load.
     //'autoObservables' => true, // All data passed through to ItemModel with be initialised with an observable.

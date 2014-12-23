@@ -32,6 +32,7 @@ window.history.pushState = window.history.pushState || function() {};
                 });
             }
 
+            this.actions ? this.actions(data.actions) : this.actions = ko.observable(data.actions);
 
             if (typeof this.extend === 'function') {
                 this.extend();
@@ -46,7 +47,6 @@ window.history.pushState = window.history.pushState || function() {};
                 this.loadedData = data;
                 this.id ? this.id(data.id) : this.id = ko.observable(data.id);
                 this.labels ? this.labels(data.labels) : this.labels = ko.observable(data.labels);
-                this.actions ? this.actions(data.actions) : this.actions = ko.observable(data.actions);
                 this.begin ? this.begin(data.begin) : this.begin = ko.observable(data.begin);
                 this.end ? this.end(data.end) : this.end = ko.observable(data.end);
                 this.totalCount ? this.totalCount(data.totalCount) : this.totalCount = ko.observable(data.totalCount);
@@ -117,8 +117,8 @@ window.history.pushState = window.history.pushState || function() {};
             this.init(data);
         };
 
-        if (typeof data.extendModels === 'string') {
-            eval(data.extendModels);
+        if (typeof data.extendModels === 'function') {
+            data.extendModels(ListView, ItemModel);
         }
 
         return new ListView(data);
