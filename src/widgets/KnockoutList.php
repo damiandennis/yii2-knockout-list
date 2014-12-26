@@ -28,6 +28,8 @@ class KnockoutList extends Widget
     public $autoObservables = true;
     public $usePushState = false;
 
+    protected static $runOnce = false;
+
     /**
      * @inheritdoc
      */
@@ -91,6 +93,11 @@ class KnockoutList extends Widget
         $view = $this->getView();
         KnockoutAsset::register($view);
         KnockoutListAsset::register($view);
+
+        if (!self::$runOnce) {
+            echo $this->render('templates');
+        }
+
         $data = JSON::encode($data);
         $view->registerJs(
             "$(function() {
@@ -99,8 +106,6 @@ class KnockoutList extends Widget
             \n",
             View::POS_END
         );
-
-        echo $this->render('templates');
 
         if ($this->applyBindings) {
             echo "<!-- ko stopBinding: true -->";
