@@ -1,6 +1,8 @@
 yii2-knockout-list
 ===============
 
+**No Longer under active development. Looking for maintainer**
+
 This is a widget that works much the same as the default ListView provided by Yii2 but with rendering done in KnockoutJS so that extending it with javascript/KnockoutJS is a breeze.
 
 ```sh
